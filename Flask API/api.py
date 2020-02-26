@@ -50,6 +50,7 @@ for index, row in df.iterrows():
     data = {}
     data['recipie'] = row['name']
     data['ingredients'] = ings
+    data['img'] = row['image']
     datas.append(data)
 
 df = json_normalize(datas)
@@ -92,8 +93,18 @@ def get_recommendations(id):
             res.append(df.iloc[k]['recipie'])
 
     new_res = list(set([i for i in res if res.count(i)>1]))
-    return jsonify(new_res)
+    datas = []
+
+    for r in new_res:
+        for index, row in df.iterrows():
+            if r == row['recipie']:
+                data = {}
+                data['recipie'] = r
+                data['img'] = row['img']
+                datas.append(data)
+                break
+    return jsonify({'recepies' : datas})
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0')
