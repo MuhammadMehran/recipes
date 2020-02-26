@@ -51,7 +51,10 @@ for index, row in df.iterrows():
     data = {}
     data['recipie'] = row['name']
     data['ingredients'] = ings
+    data['img'] = row['image']
     r_data[row['name']] = row['image']
+    data['all_ings'] = row['ingredients']
+    data['directions'] = row['method']
     datas.append(data)
 
 df = json_normalize(datas)
@@ -98,10 +101,20 @@ def get_recommendations(id):
 
     for r in new_res:
         data = {}
-        data['recipie'] = r
+        data['recipe'] = r
         data['img'] = r_data[r]
         datas.append(data)
-    return jsonify({'recepies' : datas})
+    return jsonify({'recipes' : datas})
+
+@app.route('/info/<path:id>', methods=['GET'])
+def get_info(id):
+    row = df.loc[df['recipie'] == id].iloc[0]
+    print(row)
+    data = {}
+    data['img'] = row['img']
+    data['ings']= row['all_ings']
+    data['dir'] = row['directions']
+    return jsonify(data)
 
 
 if __name__ == "__main__":
